@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1073774851729",
+    "firebase_url": "https://roadmateexecutive-91a68.firebaseio.com",
+    "project_id": "roadmateexecutive-91a68",
+    "storage_bucket": "roadmateexecutive-91a68.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1073774851729:android:5c9a49c6ef6a13f43ef130",
+        "android_client_info": {
+          "package_name": "com.roadmate.exe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1073774851729-j093bqr15icjp6dfeh2f9anif55j7t92.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0TG_pHHAoj9lKzFD3JWKKJ8WBTyqR5js"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1073774851729-j093bqr15icjp6dfeh2f9anif55j7t92.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
