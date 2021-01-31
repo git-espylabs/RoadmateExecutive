@@ -10,5 +10,6 @@ class FragmentConstants {
         const val SHOP_DETAILS_FRAGMENT = "SHOP DETAILS FRAGMENT"
         const val ADD_SHOP_FRAGMENT_FIRST = "ADD_SHOP_FRAGMENT_FIRST"
         const val ADD_SHOP_FRAGMENT_SECOND = "ADD_SHOP_FRAGMENT_SECOND"
+        const val ADD_SHOP_FRAGMENT_THIRD = "ADD_SHOP_FRAGMENT_THIRD"
     }
 }

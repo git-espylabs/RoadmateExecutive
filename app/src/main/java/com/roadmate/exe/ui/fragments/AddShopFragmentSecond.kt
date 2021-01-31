@@ -32,6 +32,7 @@ import com.roadmate.exe.R
 import com.roadmate.exe.api.manager.APIManager
 import com.roadmate.exe.api.response.RoadmateApiResponse
 import com.roadmate.exe.api.service.ApiServices
+import com.roadmate.exe.constants.FragmentConstants
 import com.roadmate.exe.extensions.toast
 import com.roadmate.exe.preference.UserDetails
 import com.roadmate.exe.utils.CommonUtils
@@ -39,7 +40,9 @@ import com.roadmate.exe.utils.ImageUtils
 import com.roadmate.exe.utils.PermissionUtils
 import com.roadmate.exe.utils.compressImageFile
 import com.yalantis.ucrop.util.FileUtils
+import kotlinx.android.synthetic.main.fragment_add_shop_first.*
 import kotlinx.android.synthetic.main.fragment_add_shop_second.*
+import kotlinx.android.synthetic.main.fragment_add_shop_second.btn_save
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -72,6 +75,7 @@ class AddShopFragmentSecond : BaseFragment(), View.OnClickListener, OnMyLocation
     private var queryImageUrl: String = ""
 
     var selectFirstImagePath = ""
+    var processCameraListener = false;
 
     private fun initMapView(){
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -89,9 +93,22 @@ class AddShopFragmentSecond : BaseFragment(), View.OnClickListener, OnMyLocation
 
     private fun processRequest() {
         if (isImageAvailable() && isLocationValid()){
-            progressHandler.postDelayed({
+            /*progressHandler.postDelayed({
                 multiPartRequest()
-            }, 500)
+            }, 500)*/
+            var mMap: HashMap<String, String> = this.arguments!!.getSerializable("regMap") as HashMap<String, String>
+            mMap["shopadd"] = edt_address.text.toString()
+            mMap["shoppin"] = edt_pincode.text.toString()
+            mMap["shoplat"] = lattitude!!
+            mMap["shoplon"] = longitude!!
+            mMap["shopimg"] = selectFirstImagePath
+
+
+            val bundle = Bundle()
+            bundle.putSerializable("regMap", mMap)
+            bundle.putString("type", arguments!!["type"].toString())
+
+            setFragment(AddShopFragmentThird(), FragmentConstants.ADD_SHOP_FRAGMENT_THIRD, bundle, false, R.id.container)
         }
     }
 
@@ -174,7 +191,7 @@ class AddShopFragmentSecond : BaseFragment(), View.OnClickListener, OnMyLocation
 
                 val response = APIManager.call<ApiServices, Response<RoadmateApiResponse>> {
                     addNewShop(image1Multipart, type, shopname, phnum, phnum2, desc,
-                        opentime, closetime,agrimentverification_status,address,pincode,latitude,logitude,trans_id,exeid, authorised_status)
+                        opentime, closetime,agrimentverification_status,address,pincode,latitude,logitude,trans_id,exeid, authorised_status, authorised_status)
                 }
                 if (response.isSuccessful && response.body()?.message!! == "Success"){
                     activity!!.toast {
@@ -315,24 +332,27 @@ class AddShopFragmentSecond : BaseFragment(), View.OnClickListener, OnMyLocation
 
     private fun configureCameraIdle(){
         onCameraIdleListener = OnCameraIdleListener {
-            val latLng = mMap!!.cameraPosition.target
-            val geocoder = Geocoder(activity)
-            val point = CameraUpdateFactory.newLatLngZoom(LatLng(latLng.latitude, latLng.longitude), 10f)
-            mMap!!.moveCamera(point)
-            mMap!!.animateCamera(point)
 
-            try {
-                val addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
-                if (addressList != null && addressList.size > 0) {
-                    val locality = addressList[0].getAddressLine(0)
-                    val country = addressList[0].countryName
-                    lattitude = "" + latLng.latitude
-                    longitude = "" + latLng.longitude
-                    edt_address.setText(locality)
-                    edt_pincode.setText(addressList[0].postalCode)
+            if (isAdded && processCameraListener){
+                val latLng = mMap!!.cameraPosition.target
+                val geocoder = Geocoder(activity)
+                val point = CameraUpdateFactory.newLatLngZoom(LatLng(latLng.latitude, latLng.longitude), 10f)
+                mMap!!.moveCamera(point)
+                mMap!!.animateCamera(point)
+
+                try {
+                    val addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+                    if (addressList != null && addressList.size > 0) {
+                        val locality = addressList[0].getAddressLine(0)
+                        val country = addressList[0].countryName
+                        lattitude = "" + latLng.latitude
+                        longitude = "" + latLng.longitude
+                        edt_address.setText(locality)
+                        edt_pincode.setText(addressList[0].postalCode)
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
                 }
-            } catch (e: IOException) {
-                e.printStackTrace()
             }
         }
     }
@@ -513,6 +533,12 @@ class AddShopFragmentSecond : BaseFragment(), View.OnClickListener, OnMyLocation
         if (progressHandler != null){
             progressHandler.removeCallbacksAndMessages(null)
         }
+        processCameraListener = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        processCameraListener = true
     }
 
     override fun onMyLocationButtonClick(): Boolean {
@@ -540,4 +566,6 @@ class AddShopFragmentSecond : BaseFragment(), View.OnClickListener, OnMyLocation
             askAppLocationPermission()
         }
     }
+
+
 }

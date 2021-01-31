@@ -3,10 +3,12 @@ package com.roadmate.exe.ui.activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.fragment.app.Fragment
 import com.roadmate.exe.R
 import com.roadmate.exe.constants.FragmentConstants
 import com.roadmate.exe.ui.fragments.AddShopFragmentFirst
 import com.roadmate.exe.ui.fragments.AddShopFragmentSecond
+import com.roadmate.exe.ui.fragments.AddShopFragmentThird
 import com.roadmate.exe.ui.fragments.ShopDetailsFragment
 
 class AddShopActivity : BaseActivity() {
@@ -20,12 +22,21 @@ class AddShopActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        var fragment: AddShopFragmentSecond? = supportFragmentManager.findFragmentByTag(FragmentConstants.ADD_SHOP_FRAGMENT_SECOND) as? AddShopFragmentSecond
-        if (fragment is AddShopFragmentSecond){
-            supportFragmentManager.popBackStack()
-        }else{
-            finish()
+        val fragment: Fragment? = supportFragmentManager.findFragmentById(R.id.container)
+        fragment?.let {
+            when (it) {
+                is AddShopFragmentSecond -> {
+                    supportFragmentManager.popBackStack()
+                }
+                is AddShopFragmentThird -> {
+                    (fragment as AddShopFragmentThird).onBackPress()
+                }
+                else -> {
+                    finish()
+                }
+            }
         }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

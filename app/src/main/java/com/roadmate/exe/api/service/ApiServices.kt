@@ -40,7 +40,8 @@ interface ApiServices {
                            @Part logitude: MultipartBody.Part,
                            @Part trans_id: MultipartBody.Part,
                            @Part exeid: MultipartBody.Part,
-                           @Part authorised_status: MultipartBody.Part): Response<RoadmateApiResponse>
+                           @Part authorised_status: MultipartBody.Part,
+                           @Part pay_status: MultipartBody.Part): Response<RoadmateApiResponse>
 
     @Multipart
     @POST("shopreg_exe_unauthorised")
