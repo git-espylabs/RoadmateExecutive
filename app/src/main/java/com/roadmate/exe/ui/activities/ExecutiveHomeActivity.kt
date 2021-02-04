@@ -3,18 +3,26 @@ package com.roadmate.exe.ui.activities
 import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.roadmate.exe.BuildConfig
 import com.roadmate.exe.R
+import com.roadmate.exe.api.manager.APIManager
+import com.roadmate.exe.api.service.ApiServices
 import com.roadmate.exe.constants.FragmentConstants
 import com.roadmate.exe.location.AppLocation
 import com.roadmate.exe.ui.fragments.ExecutiveHomeFragment
 import com.roadmate.exe.utils.PermissionUtils
 import com.roadmate.exe.utils.PermissionUtils.Companion.ACCESS_FINE_LOCATION
 import com.roadmate.exe.utils.PermissionUtils.Companion.EXTERNAL_STORAGE_WRITE_PERMISSION_REQUEST_CODE
+import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class ExecutiveHomeActivity : BaseActivity() {
 
@@ -32,6 +40,53 @@ class ExecutiveHomeActivity : BaseActivity() {
             ) { _, _ -> }
             .show()
     }
+
+
+
+    /*private fun checkAppVersion(){
+        lifecycleScope.launch {
+            val response = APIManager.call<ApiServices, Response<AppVersionMaster>> {
+                getAppVersionFromServer(appVersionRequestJSON())
+            }
+            if (response.isSuccessful && !response.body()?.data!!.isNullOrEmpty()){
+                val serverAppVersion = response.body()?.data!![0];
+                if (serverAppVersion.version_code.toInt() > BuildConfig.VERSION_CODE && serverAppVersion.version_name != getAppVersionName()){
+                    promptUpdate(serverAppVersion.version_name, getAppVersionName())
+                }
+            }
+        }
+    }*/
+
+    private fun promptUpdate(newVersion: String, oldversion: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Update available!")
+            .setCancelable(false)
+            .setMessage("You are using an out dated version(v$oldversion) of RoadMate! An updated version(v$newVersion)available in Google Play Store.")
+            .setPositiveButton("Update") { _, _ ->
+                val appPackageName = packageName
+
+                try {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("market://details?id=$appPackageName")
+                        )
+                    )
+                } catch (anfe: ActivityNotFoundException) {
+                    startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("https://play.google.com/store/apps/details?id=$appPackageName")
+                        )
+                    )
+                }
+            }
+            /*.setNegativeButton(
+                "Dismiss"
+            ) { _, _ -> }*/
+            .show()
+    }
+
 
     private fun askAppLocationPermission(){
         if (PermissionUtils.checkPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
