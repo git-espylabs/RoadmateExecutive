@@ -94,7 +94,7 @@ class LoginFragment : Fragment(), View.OnClickListener {
         loginButton.setOnClickListener (this)
         signUpButton.setOnClickListener (this)
         BuildConfig.DEBUG.doIfTrue {
-            phoneEditText.setText("9074215227")
+            phoneEditText.setText("9747821065")
         }
     }
 

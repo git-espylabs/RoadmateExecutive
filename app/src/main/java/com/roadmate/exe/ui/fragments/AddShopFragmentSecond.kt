@@ -93,22 +93,28 @@ class AddShopFragmentSecond : BaseFragment(), View.OnClickListener, OnMyLocation
 
     private fun processRequest() {
         if (isImageAvailable() && isLocationValid()){
-            /*progressHandler.postDelayed({
-                multiPartRequest()
-            }, 500)*/
-            var mMap: HashMap<String, String> = this.arguments!!.getSerializable("regMap") as HashMap<String, String>
-            mMap["shopadd"] = edt_address.text.toString()
-            mMap["shoppin"] = edt_pincode.text.toString()
-            mMap["shoplat"] = lattitude!!
-            mMap["shoplon"] = longitude!!
-            mMap["shopimg"] = selectFirstImagePath
+
+                arguments?.let {
+                    if (it["type"].toString() == "new"){
+                        val mMap: HashMap<String, String> = it.getSerializable("regMap") as HashMap<String, String>
+                        mMap["shopadd"] = edt_address.text.toString()
+                        mMap["shoppin"] = edt_pincode.text.toString()
+                        mMap["shoplat"] = lattitude!!
+                        mMap["shoplon"] = longitude!!
+                        mMap["shopimg"] = selectFirstImagePath
 
 
-            val bundle = Bundle()
-            bundle.putSerializable("regMap", mMap)
-            bundle.putString("type", arguments!!["type"].toString())
+                        val bundle = Bundle()
+                        bundle.putSerializable("regMap", mMap)
+                        bundle.putString("type", arguments!!["type"].toString())
 
-            setFragment(AddShopFragmentThird(), FragmentConstants.ADD_SHOP_FRAGMENT_THIRD, bundle, false, R.id.container)
+                        setFragment(AddShopFragmentThird(), FragmentConstants.ADD_SHOP_FRAGMENT_THIRD, bundle, false, R.id.container)
+                    }else{
+                        progressHandler.postDelayed({
+                            multiPartRequest()
+                        }, 500)
+                    }
+                }
         }
     }
 
